@@ -4,20 +4,23 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000
 const REQUEST_TIMEOUT_MS = 10000;
 const SUCCESS_POPUP_DURATION_MS = 2200;
 
-const initialLoginForm = {
+const initialSignupForm = {
+  nama: '',
+  username: '',
   email: '',
   password: '',
+  confirmPassword: '',
 };
 
-function LoginModel({ isOpen, onClose, onOpenSignup, onAuthSuccess }) {
-  const [loginForm, setLoginForm] = useState(initialLoginForm);
+function SignupModel({ isOpen, onClose, onOpenLogin, onAuthSuccess }) {
+  const [signupForm, setSignupForm] = useState(initialSignupForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   useEffect(() => {
     if (!isOpen) {
-      setLoginForm(initialLoginForm);
+      setSignupForm(initialSignupForm);
       setFeedback({ type: '', message: '' });
       setIsSubmitting(false);
       setShowSuccessPopup(false);
@@ -28,8 +31,8 @@ function LoginModel({ isOpen, onClose, onOpenSignup, onAuthSuccess }) {
     return null;
   }
 
-  const handleLoginChange = (field, value) => {
-    setLoginForm((current) => ({ ...current, [field]: value }));
+  const handleSignupChange = (field, value) => {
+    setSignupForm((current) => ({ ...current, [field]: value }));
   };
 
   const readResponsePayload = async (response) => {
@@ -42,38 +45,47 @@ function LoginModel({ isOpen, onClose, onOpenSignup, onAuthSuccess }) {
     return { detail: text };
   };
 
-  const handleLogin = async (event) => {
+  const handleSignup = async (event) => {
     event.preventDefault();
-    setIsSubmitting(true);
     setFeedback({ type: '', message: '' });
+
+    if (signupForm.password !== signupForm.confirmPassword) {
+      setFeedback({ type: 'error', message: 'Konfirmasi password tidak cocok.' });
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      const response = await fetch(`${API_BASE_URL}/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(loginForm),
+        body: JSON.stringify({
+          nama: signupForm.nama,
+          username: signupForm.username,
+          email: signupForm.email,
+          password: signupForm.password,
+        }),
         signal: controller.signal,
       }).finally(() => clearTimeout(timeoutId));
       const payload = await readResponsePayload(response);
 
       if (!response.ok) {
-        throw new Error(payload.detail || 'Login gagal.');
+        throw new Error(payload.detail || 'Pendaftaran gagal.');
       }
 
       setShowSuccessPopup(true);
-      setFeedback({
-        type: 'success',
-        message: `Selamat datang, ${payload.user.nama}!`,
-      });
+      setFeedback({ type: 'success', message: payload.message });
       onAuthSuccess?.(payload.user);
       
       setTimeout(() => {
         setShowSuccessPopup(false);
+        setSignupForm(initialSignupForm);
         onClose();
       }, SUCCESS_POPUP_DURATION_MS);
     } catch (error) {
@@ -81,10 +93,10 @@ function LoginModel({ isOpen, onClose, onOpenSignup, onAuthSuccess }) {
         type: 'error',
         message:
           error instanceof Error && error.name === 'AbortError'
-            ? 'Login timeout. Cek backend atau koneksi database lalu coba lagi.'
+            ? 'Signup timeout. Cek backend atau koneksi database lalu coba lagi.'
             : error instanceof Error
               ? error.message
-              : 'Login gagal.',
+              : 'Pendaftaran gagal.',
       });
     } finally {
       setIsSubmitting(false);
@@ -98,10 +110,10 @@ function LoginModel({ isOpen, onClose, onOpenSignup, onAuthSuccess }) {
           <div className="flex items-start justify-between gap-4">
             <div>
               <span className="inline-flex rounded-full bg-blue-50 px-4 py-1 text-sm font-medium text-blue-700">
-                Login
+                Signup
               </span>
               <h2 className="mt-4 text-2xl font-bold text-slate-900">
-                Masuk ke QCPedia
+                Daftar akun QCPedia
               </h2>
             </div>
 
@@ -126,16 +138,46 @@ function LoginModel({ isOpen, onClose, onOpenSignup, onAuthSuccess }) {
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="mt-6 space-y-4">
+          <form onSubmit={handleSignup} className="mt-6 space-y-4">
             <div>
-              <label htmlFor="login-email" className="mb-2 block text-sm font-medium text-slate-700">
+              <label htmlFor="signup-nama" className="mb-2 block text-sm font-medium text-slate-700">
+                Nama
+              </label>
+              <input
+                id="signup-nama"
+                type="text"
+                value={signupForm.nama}
+                onChange={(event) => handleSignupChange('nama', event.target.value)}
+                placeholder="Masukkan nama lengkap"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="signup-username" className="mb-2 block text-sm font-medium text-slate-700">
+                Username
+              </label>
+              <input
+                id="signup-username"
+                type="text"
+                value={signupForm.username}
+                onChange={(event) => handleSignupChange('username', event.target.value)}
+                placeholder="Masukkan username"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="signup-email" className="mb-2 block text-sm font-medium text-slate-700">
                 Email
               </label>
               <input
-                id="login-email"
+                id="signup-email"
                 type="email"
-                value={loginForm.email}
-                onChange={(event) => handleLoginChange('email', event.target.value)}
+                value={signupForm.email}
+                onChange={(event) => handleSignupChange('email', event.target.value)}
                 placeholder="nama@email.com"
                 className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500"
                 required
@@ -143,15 +185,30 @@ function LoginModel({ isOpen, onClose, onOpenSignup, onAuthSuccess }) {
             </div>
 
             <div>
-              <label htmlFor="login-password" className="mb-2 block text-sm font-medium text-slate-700">
+              <label htmlFor="signup-password" className="mb-2 block text-sm font-medium text-slate-700">
                 Password
               </label>
               <input
-                id="login-password"
+                id="signup-password"
                 type="password"
-                value={loginForm.password}
-                onChange={(event) => handleLoginChange('password', event.target.value)}
+                value={signupForm.password}
+                onChange={(event) => handleSignupChange('password', event.target.value)}
                 placeholder="Masukkan password"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="signup-confirm-password" className="mb-2 block text-sm font-medium text-slate-700">
+                Konfirmasi Password
+              </label>
+              <input
+                id="signup-confirm-password"
+                type="password"
+                value={signupForm.confirmPassword}
+                onChange={(event) => handleSignupChange('confirmPassword', event.target.value)}
+                placeholder="Ulangi password"
                 className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500"
                 required
               />
@@ -162,21 +219,21 @@ function LoginModel({ isOpen, onClose, onOpenSignup, onAuthSuccess }) {
               disabled={isSubmitting}
               className="inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
             >
-              {isSubmitting ? 'Memproses...' : 'Login'}
+              {isSubmitting ? 'Memproses...' : 'Signup'}
             </button>
           </form>
 
           <p className="mt-5 text-center text-sm text-slate-600">
-            Belum punya akun?{' '}
+            Sudah punya akun?{' '}
             <button
               type="button"
               onClick={() => {
                 onClose();
-                onOpenSignup?.();
+                onOpenLogin?.();
               }}
               className="font-semibold text-blue-600 transition hover:text-blue-700"
             >
-              Signup
+              Login
             </button>
           </p>
         </div>
@@ -190,8 +247,8 @@ function LoginModel({ isOpen, onClose, onOpenSignup, onAuthSuccess }) {
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-green-700">Login Berhasil!</h3>
-            <p className="mt-2 text-slate-600">Anda akan dialihkan dalam beberapa detik...</p>
+            <h3 className="text-2xl font-bold text-green-700">Pendaftaran Berhasil!</h3>
+            <p className="mt-2 text-slate-600">Akun Anda sudah terdaftar dan siap digunakan.</p>
           </div>
         </div>
       )}
@@ -199,4 +256,4 @@ function LoginModel({ isOpen, onClose, onOpenSignup, onAuthSuccess }) {
   );
 }
 
-export default LoginModel;
+export default SignupModel;

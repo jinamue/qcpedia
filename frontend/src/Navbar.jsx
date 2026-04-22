@@ -1,22 +1,68 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import LoginModel from './Login';
+import SignupModel from './Signup';
 
 const categoryItems = [
-  { label: 'Instruksi Kerja QC', to: '/categories?type=instruksi-kerja-qc' },
-  { label: 'List IK dan Form', to: '/categories?type=list-ik-dan-form' },
-  { label: 'Prosedur QC', to: '/categories?type=prosedur-qc' },
-  { label: 'Spesifikasi Produk', to: '/categories?type=spesifikasi-produk' },
+  { label: 'Instruksi Kerja QC', to: '/categories/instruksi-kerja-qc' },
+  { label: 'List IK dan Form', to: '/categories/list-ik-dan-form' },
+  { label: 'Prosedur QC', to: '/categories/prosedur-qc' },
+  { label: 'Spesifikasi Produk', to: '/categories/spesifikasi-produk' },
 ];
 
 function NavbarComponent() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // New state for dropdown
+  const [currentUser, setCurrentUser] = useState(null);
   const location = useLocation();
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('qcpedia-user');
+    if (savedUser) {
+      try {
+        setCurrentUser(JSON.parse(savedUser));
+      } catch {
+        localStorage.removeItem('qcpedia-user');
+      }
+    }
+  }, []);
+
+  const openLogin = () => {
+    setIsSignupOpen(false);
+    setIsLoginOpen(true);
+  };
+
+  const openSignup = () => {
+    setIsLoginOpen(false);
+    setIsSignupOpen(true);
+  };
 
   const linkClassName = (isActive) =>
     `transition ${isActive ? 'text-blue-700' : 'text-slate-700 hover:text-blue-700'}`;
+
+  const handleAuthSuccess = (user) => {
+    setCurrentUser(user);
+    localStorage.setItem('qcpedia-user', JSON.stringify(user));
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem('qcpedia-user');
+    setIsMenuOpen(false);
+  };
+
+  const renderUserBadge = (isMobile = false) => (
+    <div
+      className={`rounded-2xl border border-blue-200 bg-blue-100 px-4 py-1 text-left ${
+        isMobile ? 'w-full' : ''
+      }`}
+    >
+      <p className="mt-1 text-sm font-semibold text-slate-900">{currentUser?.nama ?? currentUser?.username}</p>
+      <p className="text-xs text-slate-600">{currentUser?.email}</p>
+    </div>
+  );
 
   return (
     <>
@@ -75,13 +121,35 @@ function NavbarComponent() {
               </Link>
             </nav>
 
-            <button
-              type="button"
-              onClick={() => setIsLoginOpen(true)}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
-            >
-              Login
-            </button>
+            {currentUser ? (
+              <div className="flex items-center gap-3">
+                {renderUserBadge()}
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={openLogin}
+                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+                >
+                  Login
+                </button>
+                <button
+                  type="button"
+                  onClick={openSignup}
+                  className="rounded-lg border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
+                >
+                  Signup
+                </button>
+              </>
+            )}
           </div>
         </div>
 
@@ -110,22 +178,62 @@ function NavbarComponent() {
               <Link to="/contact" className={linkClassName(location.pathname === '/contact')} onClick={() => setIsMenuOpen(false)}>
                 Kontak
               </Link>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  setIsLoginOpen(true);
-                }}
-                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
-              >
-                Login
-              </button>
+              {currentUser ? (
+                <>
+                  {renderUserBadge(true)}
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      openLogin();
+                    }}
+                    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+                  >
+                    Login
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      openSignup();
+                    }}
+                    className="rounded-lg border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
+                  >
+                    Signup
+                  </button>
+                </>
+              )}
             </div>
           </div>
         )}
       </header>
 
-      {isLoginOpen && <LoginModel isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />}
+      {isLoginOpen && (
+        <LoginModel
+          isOpen={isLoginOpen}
+          onClose={() => setIsLoginOpen(false)}
+          onOpenSignup={openSignup}
+          onAuthSuccess={handleAuthSuccess}
+        />
+      )}
+      {isSignupOpen && (
+        <SignupModel
+          isOpen={isSignupOpen}
+          onClose={() => setIsSignupOpen(false)}
+          onOpenLogin={openLogin}
+          onAuthSuccess={handleAuthSuccess}
+        />
+      )}
     </>
   );
 }
