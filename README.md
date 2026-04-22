@@ -1,4 +1,4 @@
-- Backend menggunakan Python FastApi /n
+- Backend menggunakan Python FastApi
 - Frontend menggunakan Javascript Vite  
 
 1. Jangan lupa buat download requirement dulu

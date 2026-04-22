@@ -1,59 +1,107 @@
-#Connect DB & Gemini API
+# Connect DB & Gemini API
 import os
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
-import mysql.connector 
+
 import google.generativeai as genai
+import mysql.connector
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
-load_dotenv(dotenv_path=".env")  # Load environment variables from .env file
-app = FastAPI()
+load_dotenv(dotenv_path=".env")
 
-# React manggil API dari localhost:3000, jadi kita perlu atur CORS agar React bisa akses API kita tanpa masalah
+app = FastAPI(title="QCPedia Backend")
+
 app.add_middleware(
-    CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"]
-    )
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-#Setting Gemini API Key
-genai.configure(api_key="AQ.Ab8RN6Jk0lNlFT1QYATCngoUhDzSHB4GFv74QgmXz_Kogwk8fw")
-model = genai.GenerativeModel("gemini-2.5-flash")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
-# Fungsi untuk mencari jawaban di database berdasarkan pertanyaan user  
-def search_Db(user_query):
+if GOOGLE_API_KEY:
+    genai.configure(api_key=GOOGLE_API_KEY)
+    model = genai.GenerativeModel("gemini-2.5-flash")
+else:
+    model = None
+
+
+class ChatRequest(BaseModel):
+    message: str
+
+
+def search_db(user_query: str):
     db = mysql.connector.connect(
         host=os.getenv("DB_HOST"),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASS"),
         database=os.getenv("DB_NAME"),
         port=3306,
-        get_warnings=True
+        get_warnings=True,
     )
 
-    # Cari di database qcpedia untuk pertanyaan yang mirip dengan user_query
-    cursor = db.cursor()
-    query = "SELECT response FROM chatbot WHERE messages LIKE %s"
-    cursor.execute(query, (f'%{user_query}%',))
-    result = cursor.fetchone()  # Ambil satu hasil yang paling mirip
-    db.close()
-    return result[0] if result else None
-
-
-# Endpoint API untuk menerima pertanyaan dari React, mencari di database, dan mengirimkan jawaban
-@app.get("/chat")
-async def chat_endpoint(query: str):
     try:
-    # 1. Cek SQL
-        data = search_Db(query) #Cari jawaban di database berdasarkan pertanyaan user
+        cursor = db.cursor()
+        query = "SELECT response FROM chatbot WHERE messages LIKE %s LIMIT 1"
+        cursor.execute(query, (f"%{user_query}%",))
+        result = cursor.fetchone()
+        return result[0] if result else None
+    finally:
+        db.close()
 
-        if data:
-            #2. Kalau data ada kirim ke gemini untuk dijawab
-            prompt = f"Gunakan data: '{data}' untuk menjawab: '{query}'"
-            response = model.generate_content(prompt)
-            return {"reply": response.text}
-        else:
-            #3 Kalau gak ada kirim reply data tidak ditemukan
-            return {"reply": "Maaf, data tidak ditemukan untuk pertanyaan Anda."}
-    
-    except Exception as e:
-        # Ini akan menangkap error apa pun dan menampilkannya di browser
-        return {"error_detail": str(e)}
+
+def build_reply(user_query: str) -> str:
+    data = search_db(user_query)
+
+    if not data:
+        return "Maaf, data tidak ditemukan untuk pertanyaan Anda."
+
+    if not model:
+        return data
+
+    prompt = (
+        "Anda adalah asisten QCPedia. Jawab singkat, jelas, dan dalam bahasa Indonesia. "
+        f"Gunakan informasi berikut sebagai sumber utama: '{data}'. "
+        f"Pertanyaan pengguna: '{user_query}'"
+    )
+
+    response = model.generate_content(prompt)
+    return getattr(response, "text", "").strip() or data
+
+
+@app.get("/")
+async def root():
+    return {"message": "QCPedia backend is running"}
+
+
+@app.get("/health")
+async def health():
+    return {"status": "ok", "gemini_configured": bool(model)}
+
+
+@app.get("/chat")
+async def chat_get(query: str):
+    try:
+        reply = build_reply(query.strip())
+        return {"reply": reply}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/chat")
+async def chat_post(payload: ChatRequest):
+    user_message = payload.message.strip()
+
+    if not user_message:
+        raise HTTPException(status_code=400, detail="Message is required.")
+
+    try:
+        reply = build_reply(user_message)
+        return {"reply": reply}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
