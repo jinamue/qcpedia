@@ -1,7 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import logoChatbot from './assets/logoChatbot.gif';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000';
+import { API_BASE_URL } from './config/api';
 
 const initialMessages = [
   {

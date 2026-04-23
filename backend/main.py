@@ -1,5 +1,6 @@
 import os
 import uuid
+from pathlib import Path
 
 import bcrypt
 import mysql.connector
@@ -9,7 +10,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 from logic import build_reply
 
-load_dotenv(dotenv_path=".env")
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(dotenv_path=BASE_DIR / ".env")
 
 app = FastAPI(title="QCPedia Backend")
 
@@ -35,6 +37,7 @@ class SignupRequest(BaseModel):
 def get_db_connection():
     return mysql.connector.connect(
         host=os.getenv("DB_HOST"),
+        port=int(os.getenv("DB_PORT", "3306")),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASS"),
         database=os.getenv("DB_NAME"),

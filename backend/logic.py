@@ -1,12 +1,14 @@
 import os
 import re
 from difflib import SequenceMatcher
+from pathlib import Path
 
 import mysql.connector
 import google.generativeai as genai
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path=".env")
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(dotenv_path=BASE_DIR / ".env")
 
 # Setup AI
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
@@ -96,7 +98,7 @@ def rank_match(query: str, message: str):
 
 def fetch_chatbot_rows():
     db = mysql.connector.connect(
-        host=os.getenv("DB_HOST"), user=os.getenv("DB_USER"),
+        host=os.getenv("DB_HOST"), port=int(os.getenv("DB_PORT", "3306")), user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASS"), database=os.getenv("DB_NAME")
     )
     try:

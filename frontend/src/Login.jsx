@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from './config/api';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000';
 const REQUEST_TIMEOUT_MS = 10000;
 const SUCCESS_POPUP_DURATION_MS = 2200;
 
