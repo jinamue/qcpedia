@@ -4,15 +4,23 @@ from difflib import SequenceMatcher
 from pathlib import Path
 
 import mysql.connector
-import google.generativeai as genai
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(dotenv_path=BASE_DIR / ".env")
 
-# Setup AI
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-model = genai.GenerativeModel("gemini-2.5-flash")
+ENABLE_GEMINI = os.getenv("ENABLE_GEMINI", "").strip().lower() in {"1", "true", "yes", "on"}
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "").strip()
+model = None
+
+if ENABLE_GEMINI and GOOGLE_API_KEY:
+    try:
+        import google.generativeai as genai
+
+        genai.configure(api_key=GOOGLE_API_KEY)
+        model = genai.GenerativeModel("gemini-2.5-flash")
+    except Exception:
+        model = None
 
 def tokenize_text(text: str):
     cleaned = re.sub(r"[^a-zA-Z0-9\s]", " ", text.lower())
@@ -197,6 +205,9 @@ def fallback_normalize_query(user_query: str):
     return " ".join(tokens[:8]).strip()
 
 def normalize_query(user_query: str):
+    if model is None:
+        return fallback_normalize_query(user_query)
+
     prompt = (
         "Anda membantu pencarian database chatbot QCPedia. "
         "Ubah pertanyaan pengguna menjadi kata kunci singkat dalam bahasa Indonesia. "
@@ -251,6 +262,9 @@ def build_reply(user_query: str):
 
     if not data:
         return {"type": "reply", "reply": "Data tidak ditemukan."}
+
+    if model is None:
+        return {"type": "reply", "reply": data}
 
     prompt = (
         "Anda adalah asisten QCPedia. Jawab singkat, jelas, dan dalam bahasa Indonesia. "
