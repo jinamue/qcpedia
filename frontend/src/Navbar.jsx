@@ -40,7 +40,7 @@ function NavbarComponent() {
   };
 
   const linkClassName = (isActive) =>
-    `transition ${isActive ? 'text-blue-700' : 'text-slate-700 hover:text-blue-700'}`;
+    `transition ${isActive ? 'text-red-700' : 'text-slate-700 hover:text-red-700'}`;
 
   const handleAuthSuccess = (user) => {
     setCurrentUser(user);
@@ -55,7 +55,7 @@ function NavbarComponent() {
 
   const renderUserBadge = (isMobile = false) => (
     <div
-      className={`rounded-2xl border border-blue-200 bg-blue-100 px-4 py-1 text-left ${
+      className={`rounded-2xl border border-red-200 bg-red-50 px-4 py-1 text-left ${
         isMobile ? 'w-full' : ''
       }`}
     >
@@ -66,7 +66,7 @@ function NavbarComponent() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur">
+      <header className="sticky top-0 z-50 border-b border-red-100/80 bg-white/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link to="/" className="flex items-center gap-3">
             <img src="/logoqcpedia.png" className="h-8 w-auto sm:h-9" alt="QCPedia Logo" />
@@ -90,7 +90,7 @@ function NavbarComponent() {
                 <button
                   type="button"
                   onClick={() => setIsDropdownOpen((open) => !open)}
-                  className="flex items-center gap-2 text-slate-700 hover:text-blue-700 transition"
+                  className="flex items-center gap-2 text-slate-700 hover:text-red-700 transition"
                 >
                   Kategori
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,12 +98,12 @@ function NavbarComponent() {
                   </svg>
                 </button>
                 {isDropdownOpen && (
-                  <div className="absolute top-full mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-lg z-10">
+                  <div className="animate-fade-up absolute top-full z-10 mt-2 w-48 rounded-lg border border-red-100 bg-white shadow-lg">
                     {categoryItems.map((item) => (
                       <Link
                         key={item.label}
                         to={item.to}
-                        className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 hover:text-blue-700"
+                        className="block px-4 py-2 text-sm text-slate-700 hover:bg-red-50 hover:text-red-700"
                         onClick={() => setIsDropdownOpen(false)}
                       >
                         {item.label}
@@ -137,14 +137,14 @@ function NavbarComponent() {
                 <button
                   type="button"
                   onClick={openLogin}
-                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+                  className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
                 >
                   Login
                 </button>
                 <button
                   type="button"
                   onClick={openSignup}
-                  className="rounded-lg border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
+                  className="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50"
                 >
                   Signup
                 </button>
@@ -197,7 +197,7 @@ function NavbarComponent() {
                       setIsMenuOpen(false);
                       openLogin();
                     }}
-                    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+                    className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
                   >
                     Login
                   </button>
@@ -207,7 +207,7 @@ function NavbarComponent() {
                       setIsMenuOpen(false);
                       openSignup();
                     }}
-                    className="rounded-lg border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
+                    className="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50"
                   >
                     Signup
                   </button>

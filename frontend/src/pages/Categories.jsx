@@ -31,9 +31,9 @@ function Categories() {
   return (
     <main className="bg-slate-50">
       <section className="container mx-auto px-4 py-8">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 lg:p-10">
-          <div className="max-w-3xl">
-            <span className="inline-flex rounded-full bg-blue-50 px-4 py-1 text-sm font-medium text-blue-700">
+        <div className="rounded-2xl border border-red-100 bg-white p-6 shadow-sm sm:p-8 lg:p-10">
+          <div className="max-w-3xl animate-fade-up">
+            <span className="inline-flex rounded-full bg-red-50 px-4 py-1 text-sm font-medium text-red-700">
               Kategori Dokumentasi
             </span>
             <h1 className="mt-4 text-3xl font-bold text-slate-900 sm:text-4xl">
@@ -50,11 +50,11 @@ function Categories() {
               <Link
                 key={category.id}
                 to={category.to}
-                className="rounded-2xl border border-slate-200 bg-slate-50 p-6 transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-md"
+                className="animate-fade-up rounded-2xl border border-red-100 bg-gradient-to-br from-white to-red-50/70 p-6 transition hover:-translate-y-1 hover:border-red-300 hover:shadow-md"
               >
                 <h2 className="text-xl font-semibold text-slate-900">{category.name}</h2>
                 <p className="mt-4 text-sm leading-6 text-slate-600">{category.description}</p>
-                <p className="mt-5 text-sm font-semibold text-blue-700">Buka kategori</p>
+                <p className="mt-5 text-sm font-semibold text-red-700">Buka kategori</p>
               </Link>
             ))}
           </div>

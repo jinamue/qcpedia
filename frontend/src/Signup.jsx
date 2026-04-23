@@ -109,7 +109,7 @@ function SignupModel({ isOpen, onClose, onOpenLogin, onAuthSuccess }) {
         <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl sm:p-8">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <span className="inline-flex rounded-full bg-blue-50 px-4 py-1 text-sm font-medium text-blue-700">
+              <span className="inline-flex rounded-full bg-red-50 px-4 py-1 text-sm font-medium text-red-700">
                 Signup
               </span>
               <h2 className="mt-4 text-2xl font-bold text-slate-900">
@@ -149,7 +149,7 @@ function SignupModel({ isOpen, onClose, onOpenLogin, onAuthSuccess }) {
                 value={signupForm.nama}
                 onChange={(event) => handleSignupChange('nama', event.target.value)}
                 placeholder="Masukkan nama lengkap"
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-red-500"
                 required
               />
             </div>
@@ -164,7 +164,7 @@ function SignupModel({ isOpen, onClose, onOpenLogin, onAuthSuccess }) {
                 value={signupForm.username}
                 onChange={(event) => handleSignupChange('username', event.target.value)}
                 placeholder="Masukkan username"
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-red-500"
                 required
               />
             </div>
@@ -179,7 +179,7 @@ function SignupModel({ isOpen, onClose, onOpenLogin, onAuthSuccess }) {
                 value={signupForm.email}
                 onChange={(event) => handleSignupChange('email', event.target.value)}
                 placeholder="nama@email.com"
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-red-500"
                 required
               />
             </div>
@@ -194,7 +194,7 @@ function SignupModel({ isOpen, onClose, onOpenLogin, onAuthSuccess }) {
                 value={signupForm.password}
                 onChange={(event) => handleSignupChange('password', event.target.value)}
                 placeholder="Masukkan password"
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-red-500"
                 required
               />
             </div>
@@ -209,7 +209,7 @@ function SignupModel({ isOpen, onClose, onOpenLogin, onAuthSuccess }) {
                 value={signupForm.confirmPassword}
                 onChange={(event) => handleSignupChange('confirmPassword', event.target.value)}
                 placeholder="Ulangi password"
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-red-500"
                 required
               />
             </div>
@@ -217,7 +217,7 @@ function SignupModel({ isOpen, onClose, onOpenLogin, onAuthSuccess }) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
+              className="inline-flex w-full items-center justify-center rounded-xl bg-red-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-300"
             >
               {isSubmitting ? 'Memproses...' : 'Signup'}
             </button>
@@ -231,7 +231,7 @@ function SignupModel({ isOpen, onClose, onOpenLogin, onAuthSuccess }) {
                 onClose();
                 onOpenLogin?.();
               }}
-              className="font-semibold text-blue-600 transition hover:text-blue-700"
+              className="font-semibold text-red-600 transition hover:text-red-700"
             >
               Login
             </button>

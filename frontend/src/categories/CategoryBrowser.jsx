@@ -8,7 +8,7 @@ function FolderIcon({ active }) {
     <svg
       aria-hidden="true"
       viewBox="0 0 24 24"
-      className={`h-5 w-5 ${active ? 'text-white' : 'text-sky-600'}`}
+      className={`h-5 w-5 ${active ? 'text-white' : 'text-red-600'}`}
       fill="currentColor"
     >
       <path d="M10 4a2 2 0 0 1 1.414.586L13.828 7H19a2 2 0 0 1 2 2v1H3V7a2 2 0 0 1 2-2h5Z" />
@@ -21,8 +21,8 @@ function FileIcon() {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 text-white" fill="currentColor">
       <path d="M7 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9.414A2 2 0 0 0 18.414 8L14 3.586A2 2 0 0 0 12.586 3H7Z" />
-      <path d="M14 3.5V8a1 1 0 0 0 1 1h4.5" className="text-sky-300" />
-      <path d="M8 12h8v1.5H8zm0 3h8v1.5H8z" className="text-sky-300" />
+      <path d="M14 3.5V8a1 1 0 0 0 1 1h4.5" className="text-red-300" />
+      <path d="M8 12h8v1.5H8zm0 3h8v1.5H8z" className="text-red-300" />
     </svg>
   );
 }
@@ -148,9 +148,9 @@ function CategoryBrowser({ categoryLabel }) {
   return (
     <main className="bg-slate-50">
       <section className="container mx-auto px-4 py-8">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 lg:p-10">
-          <div className="max-w-3xl">
-            <span className="inline-flex rounded-full bg-blue-50 px-4 py-1 text-sm font-medium text-blue-700">
+        <div className="rounded-2xl border border-red-100 bg-white p-6 shadow-sm sm:p-8 lg:p-10">
+          <div className="max-w-3xl animate-fade-up">
+            <span className="inline-flex rounded-full bg-red-50 px-4 py-1 text-sm font-medium text-red-700">
               Kategori Dokumentasi
             </span>
             <h1 className="mt-4 text-3xl font-bold text-slate-900 sm:text-4xl">{categoryLabel}</h1>
@@ -170,7 +170,7 @@ function CategoryBrowser({ categoryLabel }) {
             </div>
           ) : (
             <>
-              <div className="mt-8 rounded-2xl bg-slate-50 p-4">
+              <div className="animate-fade-up-delay mt-8 rounded-2xl border border-red-100 bg-gradient-to-r from-red-50/80 to-white p-4">
                 <div className="flex flex-wrap gap-3">
                   {categoryData?.sub_categories.map((subCategory) => {
                     const isActive = subCategory.uuid === activeSubCategory;
@@ -185,8 +185,8 @@ function CategoryBrowser({ categoryLabel }) {
                         }}
                         className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition ${
                           isActive
-                            ? 'border-blue-700 bg-blue-700 text-white shadow-sm'
-                            : 'border-transparent bg-transparent text-blue-700 hover:border-slate-200 hover:bg-white'
+                            ? 'border-red-700 bg-red-700 text-white shadow-sm'
+                            : 'border-transparent bg-transparent text-red-700 hover:border-red-200 hover:bg-white'
                         }`}
                       >
                         <span className="inline-flex items-center gap-2">
@@ -205,7 +205,7 @@ function CategoryBrowser({ categoryLabel }) {
                   <select
                     value={pageSize}
                     onChange={(event) => setPageSize(Number(event.target.value))}
-                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-blue-500"
+                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-red-500"
                   >
                     {pageSizeOptions.map((option) => (
                       <option key={option} value={option}>
@@ -222,7 +222,7 @@ function CategoryBrowser({ categoryLabel }) {
                     type="search"
                     value={searchTerm}
                     onChange={(event) => setSearchTerm(event.target.value)}
-                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-700 outline-none transition focus:border-blue-500 md:w-72"
+                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-700 outline-none transition focus:border-red-500 md:w-72"
                   />
                 </label>
               </div>
@@ -247,9 +247,9 @@ function CategoryBrowser({ categoryLabel }) {
                               <button
                                 type="button"
                                 onClick={() => handleOpenFile(page)}
-                                className="inline-flex items-center overflow-hidden rounded-xl bg-blue-600 text-white shadow-sm transition hover:bg-blue-700"
+                                className="inline-flex items-center overflow-hidden rounded-xl bg-red-600 text-white shadow-sm transition hover:bg-red-700"
                               >
-                                <span className="flex items-center bg-blue-500 px-4 py-3">
+                                <span className="flex items-center bg-red-500 px-4 py-3">
                                   <FileIcon />
                                 </span>
                                 <span className="px-6 py-3 text-sm font-semibold">Open File</span>
@@ -294,8 +294,8 @@ function CategoryBrowser({ categoryLabel }) {
                         onClick={() => setCurrentPage(pageNumber)}
                         className={`min-w-12 border-r border-slate-300 px-4 py-3 transition ${
                           isActive
-                            ? 'bg-blue-600 font-semibold text-white'
-                            : 'text-blue-700 hover:bg-slate-50'
+                            ? 'bg-red-600 font-semibold text-white'
+                            : 'text-red-700 hover:bg-red-50'
                         }`}
                       >
                         {pageNumber}
@@ -323,7 +323,7 @@ function CategoryBrowser({ categoryLabel }) {
           <div className="flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div>
-                <p className="text-sm font-medium text-blue-700">Dokumen QCPedia</p>
+                <p className="text-sm font-medium text-red-700">Dokumen QCPedia</p>
                 <h2 className="text-xl font-semibold text-slate-900">
                   {selectedPage?.name || 'Membuka file...'}
                 </h2>

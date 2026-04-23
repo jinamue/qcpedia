@@ -2,10 +2,10 @@ function Contact() {
   return (
     <main className="bg-slate-50">
       <section className="container mx-auto px-4 py-8">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 lg:p-10">
+        <div className="rounded-2xl border border-red-100 bg-white p-6 shadow-sm sm:p-8 lg:p-10">
           <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-            <div className="rounded-2xl bg-slate-50 p-6">
-              <span className="inline-flex rounded-full bg-blue-50 px-4 py-1 text-sm font-medium text-blue-700">
+            <div className="animate-fade-up rounded-2xl border border-red-100 bg-gradient-to-br from-white to-red-50/70 p-6">
+              <span className="inline-flex rounded-full bg-red-50 px-4 py-1 text-sm font-medium text-red-700">
                 Kontak
               </span>
               <h1 className="mt-4 text-3xl font-bold text-slate-900">Hubungi tim QCPedia</h1>
@@ -34,7 +34,7 @@ function Contact() {
               </div>
             </div>
 
-            <form className="grid gap-5">
+            <form className="animate-fade-up-delay grid gap-5">
               <div>
                 <label htmlFor="name" className="mb-2 block text-sm font-medium text-slate-700">
                   Nama
@@ -43,7 +43,7 @@ function Contact() {
                   id="name"
                   type="text"
                   placeholder="Masukkan nama Anda"
-                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500"
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-red-500"
                   required
                 />
               </div>
@@ -56,7 +56,7 @@ function Contact() {
                   id="email"
                   type="email"
                   placeholder="nama@email.com"
-                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500"
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-red-500"
                   required
                 />
               </div>
@@ -69,14 +69,14 @@ function Contact() {
                   id="message"
                   placeholder="Tulis kebutuhan atau pertanyaan Anda di sini"
                   rows={6}
-                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500"
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-red-500"
                   required
                 />
               </div>
 
               <button
                 type="submit"
-                className="inline-flex w-fit items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+                className="inline-flex w-fit items-center justify-center rounded-xl bg-red-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-red-700"
               >
                 Kirim Pesan
               </button>

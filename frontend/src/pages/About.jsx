@@ -2,10 +2,10 @@ function About() {
   return (
     <main className="bg-slate-50">
       <section className="container mx-auto px-4 py-8">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 lg:p-10">
+        <div className="rounded-2xl border border-red-100 bg-white p-6 shadow-sm sm:p-8 lg:p-10">
           <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-            <div>
-              <span className="inline-flex rounded-full bg-blue-50 px-4 py-1 text-sm font-medium text-blue-700">
+            <div className="animate-fade-up">
+              <span className="inline-flex rounded-full bg-red-50 px-4 py-1 text-sm font-medium text-red-700">
                 Tentang QCPedia
               </span>
               <h1 className="mt-4 text-3xl font-bold text-slate-900 sm:text-4xl">
@@ -22,7 +22,7 @@ function About() {
               </p>
             </div>
 
-            <aside className="rounded-2xl bg-slate-50 p-6">
+            <aside className="animate-fade-up-delay rounded-2xl border border-red-100 bg-gradient-to-br from-white to-red-50/70 p-6">
               <h2 className="text-lg font-semibold text-slate-900">Informasi Perusahaan</h2>
               <div className="mt-5 space-y-4 text-sm leading-6 text-slate-600">
                 <div>

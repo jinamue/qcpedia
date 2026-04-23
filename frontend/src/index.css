@@ -7,7 +7,9 @@
   line-height: 1.5;
   font-weight: 400;
   color: #1f2937;
-  background-color: #f9fafb;
+  background:
+    radial-gradient(circle at top, rgba(239, 68, 68, 0.14), transparent 30%),
+    linear-gradient(180deg, #fff8f7 0%, #f9fafb 45%, #fff4f2 100%);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -26,7 +28,9 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #f9fafb;
+  background:
+    radial-gradient(circle at top, rgba(239, 68, 68, 0.14), transparent 30%),
+    linear-gradient(180deg, #fff8f7 0%, #f9fafb 45%, #fff4f2 100%);
 }
 
 a {
@@ -50,7 +54,7 @@ button {
   isolation: isolate;
   overflow: hidden;
   border-radius: 1.5rem;
-  background-color: #0f172a;
+  background-color: #3f0d12;
   background-image: var(--hero-image);
   background-position: center;
   background-repeat: no-repeat;
@@ -61,14 +65,50 @@ button {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.7) 45%, rgba(15, 23, 42, 0.35) 100%);
+  background: linear-gradient(90deg, rgba(69, 10, 10, 0.92) 0%, rgba(127, 29, 29, 0.78) 45%, rgba(127, 29, 29, 0.35) 100%);
   z-index: -1;
 }
 
 .hero-banner-soft::before {
-  background: linear-gradient(90deg, rgba(15, 23, 42, 0.72) 0%, rgba(15, 23, 42, 0.45) 50%, rgba(15, 23, 42, 0.15) 100%);
+  background: linear-gradient(90deg, rgba(69, 10, 10, 0.76) 0%, rgba(127, 29, 29, 0.48) 50%, rgba(127, 29, 29, 0.16) 100%);
 }
 
 .hero-content {
   @apply relative z-10 px-6 py-16 sm:px-10 lg:px-14 lg:py-24;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes soft-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.7s ease-out both;
+}
+
+.animate-fade-up-delay {
+  animation: fade-up 0.9s ease-out 0.12s both;
+}
+
+.animate-fade-up-slow {
+  animation: fade-up 1.05s ease-out 0.2s both;
+}
+
+.animate-soft-float {
+  animation: soft-float 4.8s ease-in-out infinite;
 }
