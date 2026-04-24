@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import LoginModel from './Login';
-import SignupModel from './Signup';
+import { clearSession, getStoredUser, isAdminUser, subscribeToSessionChange } from './config/auth';
+import AdminLoginModal from './components/AdminLoginModal';
 
 const categoryItems = [
   { label: 'Instruksi Kerja QC', to: '/categories/instruksi-kerja-qc' },
@@ -11,45 +11,25 @@ const categoryItems = [
 ];
 
 function NavbarComponent() {
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // New state for dropdown
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const location = useLocation();
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('qcpedia-user');
-    if (savedUser) {
-      try {
-        setCurrentUser(JSON.parse(savedUser));
-      } catch {
-        localStorage.removeItem('qcpedia-user');
-      }
-    }
+    const syncSession = () => setCurrentUser(getStoredUser());
+    syncSession();
+
+    return subscribeToSessionChange(syncSession);
   }, []);
-
-  const openLogin = () => {
-    setIsSignupOpen(false);
-    setIsLoginOpen(true);
-  };
-
-  const openSignup = () => {
-    setIsLoginOpen(false);
-    setIsSignupOpen(true);
-  };
 
   const linkClassName = (isActive) =>
     `transition ${isActive ? 'text-red-700' : 'text-slate-700 hover:text-red-700'}`;
 
-  const handleAuthSuccess = (user) => {
-    setCurrentUser(user);
-    localStorage.setItem('qcpedia-user', JSON.stringify(user));
-  };
-
   const handleLogout = () => {
     setCurrentUser(null);
-    localStorage.removeItem('qcpedia-user');
+    clearSession();
     setIsMenuOpen(false);
   };
 
@@ -59,6 +39,11 @@ function NavbarComponent() {
         isMobile ? 'w-full' : ''
       }`}
     >
+      {isAdminUser(currentUser) ? (
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-red-700">Admin aktif</p>
+      ) : (
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">User</p>
+      )}
       <p className="mt-1 text-sm font-semibold text-slate-900">{currentUser?.nama ?? currentUser?.username}</p>
       <p className="text-xs text-slate-600">{currentUser?.email}</p>
     </div>
@@ -121,7 +106,7 @@ function NavbarComponent() {
               </Link>
             </nav>
 
-            {currentUser ? (
+            {isAdminUser(currentUser) ? (
               <div className="flex items-center gap-3">
                 {renderUserBadge()}
                 <button
@@ -133,22 +118,13 @@ function NavbarComponent() {
                 </button>
               </div>
             ) : (
-              <>
-                <button
-                  type="button"
-                  onClick={openLogin}
-                  className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
-                >
-                  Login
-                </button>
-                <button
-                  type="button"
-                  onClick={openSignup}
-                  className="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50"
-                >
-                  Signup
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={() => setIsAdminLoginOpen(true)}
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
+              >
+                Login Admin
+              </button>
             )}
           </div>
         </div>
@@ -178,7 +154,7 @@ function NavbarComponent() {
               <Link to="/contact" className={linkClassName(location.pathname === '/contact')} onClick={() => setIsMenuOpen(false)}>
                 Kontak
               </Link>
-              {currentUser ? (
+              {isAdminUser(currentUser) ? (
                 <>
                   {renderUserBadge(true)}
                   <button
@@ -190,50 +166,22 @@ function NavbarComponent() {
                   </button>
                 </>
               ) : (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      openLogin();
-                    }}
-                    className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
-                  >
-                    Login
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      openSignup();
-                    }}
-                    className="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50"
-                  >
-                    Signup
-                  </button>
-                </>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsAdminLoginOpen(true);
+                    setIsMenuOpen(false);
+                  }}
+                  className="rounded-lg bg-red-600 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-red-700"
+                >
+                  Login Admin
+                </button>
               )}
             </div>
           </div>
         )}
       </header>
-
-      {isLoginOpen && (
-        <LoginModel
-          isOpen={isLoginOpen}
-          onClose={() => setIsLoginOpen(false)}
-          onOpenSignup={openSignup}
-          onAuthSuccess={handleAuthSuccess}
-        />
-      )}
-      {isSignupOpen && (
-        <SignupModel
-          isOpen={isSignupOpen}
-          onClose={() => setIsSignupOpen(false)}
-          onOpenLogin={openLogin}
-          onAuthSuccess={handleAuthSuccess}
-        />
-      )}
+      <AdminLoginModal isOpen={isAdminLoginOpen} onClose={() => setIsAdminLoginOpen(false)} />
     </>
   );
 }

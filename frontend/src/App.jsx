@@ -9,10 +9,11 @@ import InstruksiKerjaQC from './categories/InstruksiKerjaQC';
 import ListIKdanForm from './categories/ListIKdanForm';
 import ProsedurQC from './categories/Prosedur QC';
 import SpesifikasiProduk from './categories/SpesifikasiProduk';
+import { APP_BASE_PATH } from './config/app';
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={APP_BASE_PATH}>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
